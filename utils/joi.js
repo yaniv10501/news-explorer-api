@@ -35,7 +35,7 @@ const passwordMethod = (value, helpers) => {
   const passwordValid = testMessage(value);
   if (passwordValid.valid) {
     const passwordStrong = testStrength(value);
-    if (!passwordStrong.valid) {
+    if (!passwordStrong) {
       return helpers.error('any.invalid');
     }
     return value;
