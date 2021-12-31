@@ -45,6 +45,8 @@ app.use(requestLogger);
 app.post('/signup', validateUserSchema, createUser);
 app.post('/signin', validateLoginSchema, login);
 
+app.use(auth);
+
 app.use('/', userRoutes);
 app.use('/', articleRoutes);
 
