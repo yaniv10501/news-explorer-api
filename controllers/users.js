@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const CastError = require('../utils/errors/CastError');
@@ -75,8 +76,15 @@ module.exports.login = (req, res, next) => {
         .compare(password, user.password)
         .then((matched) => {
           if (matched) {
-            const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+            const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '10s' });
+            const refreshToken = uuidv4();
             res.cookie('authorization', `Bearer ${token}`);
+            res.cookie('refreshToken', refreshToken, {
+              maxAge: 1000 * 60 * 60 * 24 * 7,
+              httpOnly: true,
+              secure: true,
+              signed: true,
+            });
             return res.send('Successfully logged in');
           }
           throw new AuthorizationError('Incorrect email or password');
