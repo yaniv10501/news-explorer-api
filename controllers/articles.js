@@ -63,7 +63,7 @@ module.exports.deleteArticle = (req, res, next) => {
       throw new NotFoundError('Article not found');
     })
     .then((articleToDelete) => {
-      if (articleToDelete.owner.toString() !== req.user._id) {
+      if (articleToDelete.owner.toString() !== req.user?._id) {
         throw new NotAllowedError('You are not allowed to delete this article');
       }
       article
