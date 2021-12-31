@@ -1,10 +1,10 @@
 const router = require('express').Router();
-const { validateUserSchema, validateHeadersIdParamScehema } = require('../utils/joi');
+const { validateArticleSchema, validateHeadersIdParamScehema } = require('../utils/joi');
 const { getSavedArticles, saveArticle, deleteArticle } = require('../controllers/articles');
 
 router.get('/articles', getSavedArticles);
 
-router.post('/articles', validateUserSchema, saveArticle);
+router.post('/articles', validateArticleSchema, saveArticle);
 
 router.delete('/articles/:articleId', validateHeadersIdParamScehema, deleteArticle);
 

@@ -3,6 +3,7 @@ const CastError = require('../utils/errors/CastError');
 const ValidationError = require('../utils/errors/ValidationError');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const NotAllowedError = require('../utils/errors/NotAllowedError');
+const user = require('../models/user');
 
 const checkErrors = (error, next) => {
   if (error.name === 'ValidationError') {
@@ -19,25 +20,33 @@ const checkErrors = (error, next) => {
 module.exports.saveArticle = (req, res, next) => {
   const { keyword, title, text, date, source, link, image, owner } = req.body;
 
-  article
-    .create({
-      keyword,
-      title,
-      text,
-      date,
-      source,
-      link,
-      image,
-      owner,
+  user
+    .findOne({ _id: owner })
+    .orFail(() => {
+      throw new NotFoundError('Owner does not exist');
     })
-    .then((savedArticle) => {
-      res.status(201).json({
-        message: `Article ${title} saved successfully`,
-        article: {
+    .then(() => {
+      article
+        .create({
+          keyword,
           title,
-          id: savedArticle._id,
-        },
-      });
+          text,
+          date,
+          source,
+          link,
+          image,
+          owner,
+        })
+        .then((savedArticle) => {
+          res.status(201).json({
+            message: `Article ${title} saved successfully`,
+            article: {
+              title,
+              id: savedArticle._id,
+            },
+          });
+        })
+        .catch((error) => checkErrors(error, next));
     })
     .catch((error) => checkErrors(error, next));
 };
