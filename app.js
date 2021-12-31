@@ -40,7 +40,7 @@ app.options('*', cors());
 app.use(requestLogger);
 
 app.post('/signup', validateUserSchema, createUser);
-app.post('./signin', validateLoginSchema, login);
+app.post('/signin', validateLoginSchema, login);
 
 app.use('/', userRoutes);
 app.use('/', articleRoutes);
