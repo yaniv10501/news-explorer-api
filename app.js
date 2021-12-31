@@ -10,6 +10,7 @@ const ResourceNotFound = require('./utils/errors/ResourceNotFound');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const userRoutes = require('./routes/user');
 const articleRoutes = require('./routes/article');
+const { createUser, login } = require('./controllers/users');
 
 const app = express();
 
@@ -36,6 +37,9 @@ app.use(cors());
 app.options('*', cors());
 
 app.use(requestLogger);
+
+app.post('/signup', createUser);
+app.post('./signin', login);
 
 app.use('/', userRoutes);
 app.use('/', articleRoutes);
