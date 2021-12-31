@@ -79,6 +79,17 @@ module.exports.validateUserSchema = (req, res, next) => {
   return next();
 };
 
+const loginSchema = Joi.object({
+  email: Joi.string().custom(emailMethod).required(),
+  password: Joi.string().custom(passwordMethod).required(),
+});
+
+module.exports.validateLoginSchema = (req, res, next) => {
+  const { error } = loginSchema.validate(req.body);
+  if (error) return next(new ValidationError('Invalid request'));
+  return next();
+};
+
 const articleSchema = Joi.object({
   keyword: Joi.string().custom(stringMethod).required(),
   title: Joi.string().custom(stringMethod).required(),
