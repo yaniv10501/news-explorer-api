@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const AuthorizationError = require('../utils/errors/AuthorizationError');
 
 module.exports = (req, res, next) => {
-  const { authorization, refreshToken } = req.cookies;
+  const { authorization } = req.cookies;
+  const { refreshToken } = req.signedCookies;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new AuthorizationError('Authorization is required');
