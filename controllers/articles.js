@@ -47,7 +47,9 @@ module.exports.getSavedArticles = (req, res, next) => {
 
   article
     .find({ owner: userId })
-    .orFail((error) => checkErrors(error, next))
+    .orFail(() => {
+      throw new NotFoundError('No saved articles found');
+    })
     .then((articles) => {
       res.status(201).json(articles);
     })
