@@ -9,9 +9,7 @@ module.exports = (req, res, next) => {
   }
 
   const token = authorization.replace('Bearer ', '');
-  const {
-    JWT_SECRET = 'Secret-key',
-  } = process.env;
+  const { JWT_SECRET = 'Secret-key' } = process.env;
 
   let payload;
 

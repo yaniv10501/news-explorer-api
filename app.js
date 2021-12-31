@@ -8,6 +8,8 @@ const logger = require('./utils/logger');
 const ServerError = require('./utils/errors/ServerError');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const userRoutes = require('./routes/user');
+const articleRoutes = require('./routes/article');
 
 const app = express();
 
@@ -34,6 +36,9 @@ app.use(cors());
 app.options('*', cors());
 
 app.use(requestLogger);
+
+app.use('/', userRoutes);
+app.use('/', articleRoutes);
 
 app.use(errorLogger);
 
