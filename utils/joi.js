@@ -86,8 +86,8 @@ const loginSchema = Joi.object({
 
 module.exports.validateLoginSchema = (req, res, next) => {
   const { error } = loginSchema.validate(req.body);
-  if (!error) return;
-  next(new ValidationError('Invalid request'));
+  if (error) return next(new ValidationError('Invalid request'));
+  return next();
 };
 
 const articleSchema = Joi.object({
