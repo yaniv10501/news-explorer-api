@@ -3,7 +3,7 @@ module.exports = class ValidationError extends Error {
     super(
       message
         .slice(message.indexOf(':') + 2)
-        .replace(/Path\s`\w{1,}`\s/g, '')
+        .replace(/^Path\s`\w{1,}`\s/g, '')
         .replace(/.,/g, ',')
     );
     this.name = 'ValidationError';
