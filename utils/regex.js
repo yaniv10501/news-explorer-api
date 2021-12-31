@@ -1,6 +1,11 @@
-module.exports.testUrl = (string) => {
-  const pattern = /^(https?:\/\/)([\w\-._~:/?%#[\]@!$&'()*+,;=]+)/;
-  return pattern.test(string);
+module.exports.testUrl = (url) => {
+  const pattern =
+    /https?:\/\/(www\.)?[\w._-~:/?%#[\]@!$&'()*+,;=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([\w._-~:/?%#[\]@\-!$&'()*+,;=]*)/;
+
+  return {
+    valid: pattern.test(url),
+    match: url.match(pattern),
+  };
 };
 
 module.exports.testEmail = (email) => {
