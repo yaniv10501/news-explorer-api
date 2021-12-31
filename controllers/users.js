@@ -76,6 +76,7 @@ module.exports.login = (req, res, next) => {
         .then((matched) => {
           if (matched) {
             const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+            res.cookie('token', token);
             return res.send({ token });
           }
           throw new AuthorizationError('Incorrect email or password');

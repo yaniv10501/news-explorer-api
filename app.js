@@ -3,6 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const ServerError = require('./utils/errors/ServerError');
@@ -34,6 +35,7 @@ app.set('env', NODE_ENV);
 app.use(helmet());
 app.use(limiter);
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 app.options('*', cors());
 
