@@ -2,13 +2,13 @@ const jwt = require('jsonwebtoken');
 const AuthorizationError = require('../utils/errors/AuthorizationError');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.cookies.token;
+  const { authorization } = req.cookies;
 
-  if (!authorization || !authorization.startsWith('token=')) {
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new AuthorizationError('Authorization is required');
   }
 
-  const token = authorization.replace('token=', '');
+  const token = authorization.replace('Bearer ', '');
   const { JWT_SECRET = 'Secret-key' } = process.env;
 
   let payload;
