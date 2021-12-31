@@ -13,6 +13,7 @@ const userRoutes = require('./routes/user');
 const articleRoutes = require('./routes/article');
 const { createUser, login } = require('./controllers/users');
 const { validateUserSchema, validateLoginSchema } = require('./utils/joi');
+const auth = require('./middlewares/auth');
 
 const app = express();
 
@@ -43,6 +44,8 @@ app.use(requestLogger);
 
 app.post('/signup', validateUserSchema, createUser);
 app.post('/signin', validateLoginSchema, login);
+
+app.use(auth);
 
 app.use('/', userRoutes);
 app.use('/', articleRoutes);
