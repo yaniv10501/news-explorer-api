@@ -11,6 +11,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const userRoutes = require('./routes/user');
 const articleRoutes = require('./routes/article');
 const { createUser, login } = require('./controllers/users');
+const { validateUserSchema, validateLoginSchema } = require('./utils/joi');
 
 const app = express();
 
@@ -38,8 +39,8 @@ app.options('*', cors());
 
 app.use(requestLogger);
 
-app.post('/signup', createUser);
-app.post('./signin', login);
+app.post('/signup', validateUserSchema, createUser);
+app.post('./signin', validateLoginSchema, login);
 
 app.use('/', userRoutes);
 app.use('/', articleRoutes);
