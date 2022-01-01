@@ -133,10 +133,13 @@ module.exports.login = (req, res, next) => {
                       );
                     }
                   });
-                  res.cookie('authorization', `Bearer ${token}`);
+                  res.cookie('authorization', `Bearer ${token}`, {
+                    maxAge: 1000 * 30,
+                  });
                   res.cookie('refreshToken', refreshJwt, {
                     maxAge: 1000 * 60 * 60 * 24 * 7,
                     httpOnly: true,
+                    secure: true,
                     signed: true,
                   });
                   return res.send('Successfully logged in');

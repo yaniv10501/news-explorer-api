@@ -1,19 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 const ServerError = require('./utils/errors/ServerError');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
+const limiter = require('./utils/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const userRoutes = require('./routes/user');
-const articleRoutes = require('./routes/article');
-const { createUser, login } = require('./controllers/users');
-const { validateUserSchema, validateLoginSchema } = require('./utils/joi');
-const auth = require('./middlewares/auth');
+const routes = require('./routes/index');
 
 const app = express();
 
@@ -26,30 +22,19 @@ const {
 
 mongoose.connect(`${MONGO_DB_SERVER}/finalproject`);
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-
 app.set('port', PORT);
 app.set('env', NODE_ENV);
 
 app.use(helmet());
-app.use(limiter);
 app.use(express.json());
 app.use(cookieParser(COOKIE_SECRET));
 app.use(cors());
 app.options('*', cors());
 
 app.use(requestLogger);
+app.use(limiter);
 
-app.post('/signup', validateUserSchema, createUser);
-app.post('/signin', validateLoginSchema, login);
-
-app.use(auth);
-
-app.use('/', userRoutes);
-app.use('/', articleRoutes);
+app.use(routes);
 
 app.use(errorLogger);
 

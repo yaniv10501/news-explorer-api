@@ -53,7 +53,7 @@ module.exports.saveArticle = (req, res, next) => {
 };
 
 module.exports.getSavedArticles = (req, res, next) => {
-  const { userId } = req.params;
+  const { _id: userId } = req.user;
 
   article
     .find({ owner: userId })
