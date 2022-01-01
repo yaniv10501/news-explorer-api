@@ -9,20 +9,20 @@ const { getAllUsers, getUserMe, createUser, login } = require('../controllers/us
 const { getSavedArticles, saveArticle, deleteArticle } = require('../controllers/articles');
 const auth = require('../middlewares/auth');
 
-router.post('/signup', validateUserSchema, createUser);
+router.post('/api/signup', validateUserSchema, createUser);
 
-router.post('/signin', validateLoginSchema, login);
+router.post('/api/signin', validateLoginSchema, login);
 
 router.use(auth);
 
-router.get('/articles', getSavedArticles);
+router.get('/api/articles', getSavedArticles);
 
-router.post('/articles', validateArticleSchema, saveArticle);
+router.post('/api/articles', validateArticleSchema, saveArticle);
 
-router.delete('/articles/:articleId', validateHeadersIdParamScehema, deleteArticle);
+router.delete('/api/articles/:articleId', validateHeadersIdParamScehema, deleteArticle);
 
-router.get('/users/all', getAllUsers);
+router.get('/api/users/all', getAllUsers);
 
-router.get('/users/me', getUserMe);
+router.get('/api/users/me', getUserMe);
 
 module.exports = router;
