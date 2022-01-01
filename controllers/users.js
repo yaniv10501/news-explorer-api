@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
+const Tokens = require('../models/token');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const CastError = require('../utils/errors/CastError');
 const ValidationError = require('../utils/errors/ValidationError');
@@ -74,20 +75,74 @@ module.exports.login = (req, res, next) => {
     .then((user) =>
       bcrypt
         .compare(password, user.password)
-        .then((matched) => {
-          if (matched) {
-            const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '10s' });
-            const refreshToken = uuidv4();
-            res.cookie('authorization', `Bearer ${token}`);
-            res.cookie('refreshToken', refreshToken, {
-              maxAge: 1000 * 60 * 60 * 24 * 7,
-              httpOnly: true,
-              secure: true,
-              signed: true,
+        .then(async (matched) => {
+          if (!matched) throw new AuthorizationError('Incorrect email or password');
+          const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '10s' });
+          const refreshToken = uuidv4();
+          const refreshJwt = jwt.sign({ _id: user._id, token: refreshToken }, JWT_SECRET, {
+            expiresIn: '7d',
+          });
+          await Tokens.create({
+            userId: user._id,
+            refreshTokens: [
+              {
+                token: refreshToken,
+                expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+              },
+            ],
+          })
+            .then(() => {
+              res.cookie('authorization', `Bearer ${token}`, {
+                maxAge: 1000 * 30,
+              });
+              res.cookie('refreshToken', refreshJwt, {
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+                httpOnly: true,
+                secure: true,
+                signed: true,
+              });
+              return res.send('Successfully logged in');
+            })
+            .catch((error) => {
+              if (
+                error.name !== 'MongoServerError' ||
+                !error.message.includes('userId_1 dup key')
+              ) {
+                checkErrors(error, next);
+                return;
+              }
+              Tokens.findOneAndUpdate(
+                { userId: user._id },
+                {
+                  $addToSet: {
+                    refreshTokens: {
+                      token: refreshToken,
+                      expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+                    },
+                  },
+                }
+              )
+                .then(async (result) => {
+                  await result.refreshTokens.forEach(async (item) => {
+                    if (Date.now() >= item.expires) {
+                      await Tokens.findOneAndUpdate(
+                        { userId: user._id },
+                        {
+                          $pull: { refreshTokens: { token: item.token } },
+                        }
+                      );
+                    }
+                  });
+                  res.cookie('authorization', `Bearer ${token}`);
+                  res.cookie('refreshToken', refreshJwt, {
+                    maxAge: 1000 * 60 * 60 * 24 * 7,
+                    httpOnly: true,
+                    signed: true,
+                  });
+                  return res.send('Successfully logged in');
+                })
+                .catch((err) => checkErrors(err, next));
             });
-            return res.send('Successfully logged in');
-          }
-          throw new AuthorizationError('Incorrect email or password');
         })
         .catch((error) => checkErrors(error, next))
     )
