@@ -98,7 +98,6 @@ const articleSchema = Joi.object({
   source: Joi.string().custom(stringMethod).required(),
   link: Joi.string().custom(urlMethod).required(),
   image: Joi.string().custom(urlMethod).required(),
-  owner: Joi.string().custom(stringMethod).required(),
 });
 
 module.exports.validateArticleSchema = (req, res, next) => {

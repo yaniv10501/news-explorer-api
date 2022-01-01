@@ -18,7 +18,8 @@ const checkErrors = (error, next) => {
 };
 
 module.exports.saveArticle = (req, res, next) => {
-  const { keyword, title, text, date, source, link, image, owner } = req.body;
+  const { keyword, title, text, date, source, link, image } = req.body;
+  const { _id: owner } = req.user;
 
   user
     .findOne({ _id: owner })
@@ -66,10 +67,11 @@ module.exports.getSavedArticles = (req, res, next) => {
 };
 
 module.exports.deleteArticle = (req, res, next) => {
-  const { articleId } = req.params._id;
+  const { articleId } = req.params;
 
   article
     .findOne({ _id: articleId })
+    .select('+owner')
     .orFail(() => {
       throw new NotFoundError('Article not found');
     })
