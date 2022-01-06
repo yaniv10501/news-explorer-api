@@ -95,10 +95,12 @@ module.exports.login = (req, res, next) => {
               res.cookie('authorization', `Bearer ${token}`, {
                 maxAge: 1000 * 30,
                 httpOnly: false,
+                secure: false,
               });
               res.cookie('refreshToken', refreshJwt, {
                 maxAge: 1000 * 60 * 60 * 24 * 7,
                 httpOnly: false,
+                secure: false,
               });
               return res.json({
                 email: user.email,
