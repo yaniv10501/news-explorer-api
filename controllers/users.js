@@ -101,7 +101,10 @@ module.exports.login = (req, res, next) => {
                 secure: true,
                 signed: true,
               });
-              return res.send('Successfully logged in');
+              return res.json({
+                email: user.email,
+                name: user.name,
+              });
             })
             .catch((error) => {
               if (
@@ -143,7 +146,8 @@ module.exports.login = (req, res, next) => {
                     signed: true,
                   });
                   return res.json({
-                    message: 'Successfully logged in',
+                    email: user.email,
+                    name: user.name,
                   });
                 })
                 .catch((err) => checkErrors(err, next));
