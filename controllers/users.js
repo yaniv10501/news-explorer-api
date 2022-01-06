@@ -142,7 +142,9 @@ module.exports.login = (req, res, next) => {
                     secure: true,
                     signed: true,
                   });
-                  return res.send('Successfully logged in');
+                  return res.json({
+                    message: 'Successfully logged in',
+                  });
                 })
                 .catch((err) => checkErrors(err, next));
             });
