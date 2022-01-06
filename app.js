@@ -8,6 +8,7 @@ const logger = require('./utils/logger');
 const ServerError = require('./utils/errors/ServerError');
 const ResourceNotFound = require('./utils/errors/ResourceNotFound');
 const limiter = require('./utils/limiter');
+const corsConfig = require('./utils/corsConfig');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes/index');
 
@@ -28,8 +29,8 @@ app.set('env', NODE_ENV);
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser(COOKIE_SECRET));
-app.use(cors());
-app.options('*', cors());
+app.use(cors(corsConfig));
+app.options('*', cors(corsConfig));
 
 app.use(requestLogger);
 app.use(limiter);
