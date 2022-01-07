@@ -116,7 +116,7 @@ module.exports = async (req, res, next) => {
               signed: true,
               domain: 'nomoreparties.sbs',
             });
-            payload = userId;
+            payload = { _id: userId };
           })
           .catch((error) => next(error));
       } catch (error) {
