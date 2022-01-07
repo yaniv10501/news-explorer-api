@@ -96,12 +96,14 @@ module.exports.login = (req, res, next) => {
                 maxAge: 1000 * 30,
                 httpOnly: false,
                 secure: false,
+                domain: 'nomoreparties.sbs',
               });
               res.cookie('refreshToken', refreshJwt, {
                 maxAge: 1000 * 60 * 60 * 24 * 7,
                 httpOnly: false,
                 secure: false,
                 signed: true,
+                domain: 'nomoreparties.sbs',
               });
               return res.json({
                 email: user.email,
