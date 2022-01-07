@@ -107,12 +107,14 @@ module.exports = async (req, res, next) => {
               maxAge: 1000 * 60 * 15,
               httpOnly: false,
               secure: false,
+              domain: 'nomoreparties.sbs',
             });
             res.cookie('refreshToken', newRefreshJwt, {
               maxAge: 1000 * 60 * 60 * 24 * 7,
               httpOnly: false,
               secure: false,
               signed: true,
+              domain: 'nomoreparties.sbs',
             });
             payload = userId;
           })
