@@ -105,11 +105,13 @@ module.exports = async (req, res, next) => {
             await Tokens.bulkWrite(bulkUpdate);
             res.cookie('authorization', `Bearer ${newToken}`, {
               maxAge: 1000 * 60 * 15,
+              httpOnly: false,
+              secure: false,
             });
             res.cookie('refreshToken', newRefreshJwt, {
               maxAge: 1000 * 60 * 60 * 24 * 7,
-              httpOnly: true,
-              secure: true,
+              httpOnly: false,
+              secure: false,
               signed: true,
             });
             payload = userId;
