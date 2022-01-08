@@ -77,6 +77,7 @@ module.exports.checkSavedArticles = async (req, res, next) => {
           .catch((error) => {
             if (error instanceof NotFoundError) {
               resolve(articleItem);
+              return;
             }
             checkErrors(error, next);
             reject(error);
