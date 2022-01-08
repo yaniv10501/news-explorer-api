@@ -88,14 +88,14 @@ module.exports.login = (req, res, next) => {
             .then(() => {
               res.cookie('authorization', `Bearer ${token}`, {
                 maxAge: 1000 * 30,
-                httpOnly: false,
-                secure: false,
+                httpOnly: true,
+                secure: true,
                 domain: 'nomoreparties.sbs',
               });
               res.cookie('refreshToken', refreshJwt, {
                 maxAge: 1000 * 60 * 60 * 24 * 7,
-                httpOnly: false,
-                secure: false,
+                httpOnly: true,
+                secure: true,
                 signed: true,
                 domain: 'nomoreparties.sbs',
               });
@@ -136,14 +136,14 @@ module.exports.login = (req, res, next) => {
                   });
                   res.cookie('authorization', `Bearer ${token}`, {
                     maxAge: 1000 * 30,
-                    httpOnly: false,
-                    secure: false,
+                    httpOnly: true,
+                    secure: true,
                     domain: 'nomoreparties.sbs',
                   });
                   res.cookie('refreshToken', refreshJwt, {
                     maxAge: 1000 * 60 * 60 * 24 * 7,
-                    httpOnly: false,
-                    secure: false,
+                    httpOnly: true,
+                    secure: true,
                     signed: true,
                     domain: 'nomoreparties.sbs',
                   });
@@ -165,14 +165,14 @@ module.exports.logout = (req, res, next) => {
     .then(() => {
       res.cookie('authorization', '', {
         maxAge: 0,
-        httpOnly: false,
-        secure: false,
+        httpOnly: true,
+        secure: true,
         domain: 'nomoreparties.sbs',
       });
       res.cookie('refreshToken', '', {
         maxAge: 0,
-        httpOnly: false,
-        secure: false,
+        httpOnly: true,
+        secure: true,
         signed: true,
         domain: 'nomoreparties.sbs',
       });
