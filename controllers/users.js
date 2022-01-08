@@ -164,13 +164,13 @@ module.exports.logout = (req, res, next) => {
   Tokens.deleteOne({ userId: _id })
     .then(() => {
       res.cookie('authorization', '', {
-        maxAge: Date.now(),
+        expires: Date.now(),
         httpOnly: false,
         secure: false,
         domain: 'nomoreparties.sbs',
       });
       res.cookie('refreshToken', '', {
-        maxAge: Date.now(),
+        expires: Date.now(),
         httpOnly: false,
         secure: false,
         signed: true,
