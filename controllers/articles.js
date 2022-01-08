@@ -58,7 +58,7 @@ module.exports.saveArticle = (req, res, next) => {
 };
 
 module.exports.checkSavedArticles = (req, res, next) => {
-  const { articles } = req;
+  const { articles } = req.body;
 
   articles.forEach((item) => {
     const articleItem = item;
