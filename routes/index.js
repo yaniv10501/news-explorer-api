@@ -6,7 +6,12 @@ const {
   validateLoginSchema,
 } = require('../utils/joi');
 const { getAllUsers, getUserMe, createUser, login } = require('../controllers/users');
-const { getSavedArticles, saveArticle, deleteArticle } = require('../controllers/articles');
+const {
+  getSavedArticles,
+  saveArticle,
+  deleteArticle,
+  checkSavedArticles,
+} = require('../controllers/articles');
 const auth = require('../middlewares/auth');
 
 router.post('/api/signup', validateUserSchema, createUser);
@@ -16,6 +21,8 @@ router.post('/api/signin', validateLoginSchema, login);
 router.use(auth);
 
 router.get('/api/articles', getSavedArticles);
+
+router.post('/api/articles/checkSaved', checkSavedArticles);
 
 router.post('/api/articles', validateArticleSchema, saveArticle);
 

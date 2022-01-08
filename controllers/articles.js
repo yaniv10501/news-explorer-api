@@ -57,7 +57,7 @@ module.exports.saveArticle = (req, res, next) => {
     .catch((error) => checkErrors(error, next));
 };
 
-module.exports.checkSaveArticles = (req, res, next) => {
+module.exports.checkSavedArticles = (req, res, next) => {
   const { articles } = req;
 
   articles.forEach((item) => {
