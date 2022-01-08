@@ -5,7 +5,7 @@ const {
   validateUserSchema,
   validateLoginSchema,
 } = require('../utils/joi');
-const { getUserMe, createUser, login } = require('../controllers/users');
+const { getUserMe, createUser, login, logout } = require('../controllers/users');
 const {
   getSavedArticles,
   saveArticle,
@@ -29,5 +29,7 @@ router.post('/api/articles', validateArticleSchema, saveArticle);
 router.delete('/api/articles/:articleId', validateHeadersIdParamScehema, deleteArticle);
 
 router.get('/api/users/me', getUserMe);
+
+router.post('/api/signout', logout);
 
 module.exports = router;

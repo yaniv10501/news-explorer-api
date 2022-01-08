@@ -50,7 +50,7 @@ module.exports.createUser = (req, res, next) => {
 };
 
 module.exports.getUserMe = (req, res, next) => {
-  User.findOne({ _id: req.user?._id })
+  User.findOne({ _id: req.user._id })
     .orFail(() => {
       throw new NotFoundError('User ID not found');
     })
@@ -148,8 +148,7 @@ module.exports.login = (req, res, next) => {
                     domain: 'nomoreparties.sbs',
                   });
                   return res.json({
-                    email: user.email,
-                    name: user.name,
+                    message: 'Successfully logged in',
                   });
                 })
                 .catch((err) => checkErrors(err, next));
@@ -157,5 +156,27 @@ module.exports.login = (req, res, next) => {
         })
         .catch((error) => checkErrors(error, next))
     )
+    .catch((error) => checkErrors(error, next));
+};
+
+module.exports.logout = (req, res, next) => {
+  const { _id } = req.user;
+  Tokens.deleteOne({ userId: _id })
+    .then(() => {
+      res.cookie('authorization', {
+        maxAge: Date.now(),
+        httpOnly: false,
+        secure: false,
+        domain: 'nomoreparties.sbs',
+      });
+      res.cookie('refreshToken', {
+        maxAge: Date.now(),
+        httpOnly: false,
+        secure: false,
+        signed: true,
+        domain: 'nomoreparties.sbs',
+      });
+      res.json({ message: 'Successfully logged out' });
+    })
     .catch((error) => checkErrors(error, next));
 };
