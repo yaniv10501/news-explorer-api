@@ -54,7 +54,7 @@ module.exports.getUserMe = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('User ID not found');
     })
-    .then((user) => res.json({ name: user.name, email: user.email }))
+    .then((user) => res.send(user))
     .catch((error) => checkErrors(error, next));
 };
 
