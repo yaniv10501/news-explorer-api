@@ -77,7 +77,7 @@ module.exports.checkSavedArticles = (req, res, next) => {
         checkErrors(error, next);
       });
   });
-  res.send(article);
+  res.json(articles);
 };
 
 module.exports.getSavedArticles = (req, res, next) => {
