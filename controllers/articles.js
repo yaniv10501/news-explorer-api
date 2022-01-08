@@ -3,6 +3,7 @@ const CastError = require('../utils/errors/CastError');
 const ValidationError = require('../utils/errors/ValidationError');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const NotAllowedError = require('../utils/errors/NotAllowedError');
+const AlreadyUsedError = require('../utils/errors/AlreadyUsedError');
 const user = require('../models/user');
 
 const checkErrors = (error, next) => {
@@ -12,6 +13,10 @@ const checkErrors = (error, next) => {
   }
   if (error.name === 'CastError') {
     next(new CastError(error.reason));
+    return;
+  }
+  if (error.name === 'MongoServerError' && error.message.includes('link_1 dup key')) {
+    next(new AlreadyUsedError('This Article is already saved'));
     return;
   }
   next(error);
