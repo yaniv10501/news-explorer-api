@@ -6,7 +6,7 @@ const AuthorizationError = require('../utils/errors/AuthorizationError');
 module.exports = async (req, res, next) => {
   // Trying to authorize a user
   try {
-    const { authorization = 'token' } = req.cookies;
+    const { authorization } = req.cookies;
     const { refreshToken: refreshJwt } = req.signedCookies;
 
     // If no token or refreshToken throw an error
