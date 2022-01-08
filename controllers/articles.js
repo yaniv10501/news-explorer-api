@@ -57,33 +57,35 @@ module.exports.saveArticle = (req, res, next) => {
     .catch((error) => checkErrors(error, next));
 };
 
-module.exports.checkSavedArticles = (req, res, next) => {
+module.exports.checkSavedArticles = async (req, res, next) => {
   const { _id: userId } = req.user;
   const { articles } = req.body;
 
-  const checkedArticles = articles.map(async (item) => {
-    const articleItem = item;
-    const checkItemPromise = new Promise((resolve, reject) => {
-      article
-        .findOne({ owner: userId, link: articleItem.url })
-        .orFail(() => {
-          throw new NotFoundError('Article is not saved');
-        })
-        .then((savedArticle) => {
-          articleItem._id = savedArticle._id;
-          resolve(articleItem);
-        })
-        .catch((error) => {
-          if (error instanceof NotFoundError) {
+  const checkedArticles = await Promise.all(
+    articles.map(async (item) => {
+      const articleItem = item;
+      const checkItemPromise = new Promise((resolve, reject) => {
+        article
+          .findOne({ owner: userId, link: articleItem.url })
+          .orFail(() => {
+            throw new NotFoundError('Article is not saved');
+          })
+          .then((savedArticle) => {
+            articleItem._id = savedArticle._id;
             resolve(articleItem);
-          }
-          checkErrors(error, next);
-          reject(error);
-        });
-    });
-    await checkItemPromise;
-    return articleItem;
-  });
+          })
+          .catch((error) => {
+            if (error instanceof NotFoundError) {
+              resolve(articleItem);
+            }
+            checkErrors(error, next);
+            reject(error);
+          });
+      });
+      await checkItemPromise;
+      return articleItem;
+    })
+  );
   res.json({ checkedArticles });
 };
 
