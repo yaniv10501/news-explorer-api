@@ -61,9 +61,9 @@ module.exports.checkSavedArticles = async (req, res, next) => {
   const { _id: userId } = req.user;
   const { articles } = req.body;
 
-  const checkedArticles = await articles.map((item) => {
+  const checkedArticles = await articles.map(async (item) => {
     const articleItem = item;
-    article
+    await article
       .findOne({ owner: userId, link: articleItem.url })
       .orFail(() => {
         throw new NotFoundError('Article is not saved');
