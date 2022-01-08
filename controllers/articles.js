@@ -61,24 +61,24 @@ module.exports.checkSavedArticles = async (req, res, next) => {
   const { _id: userId } = req.user;
   const { articles } = req.body;
 
-  const checkedArticles = await articles.map((item) => {
-    const articleItem = item;
-    return article
+  const checkedArticles = await articles.map(async (item) => {
+    let articleItem = item;
+    articleItem = await article
       .findOne({ owner: userId, link: articleItem.url })
       .orFail(() => {
         throw new NotFoundError('Article is not saved');
       })
       .then((savedArticle) => {
         articleItem._id = savedArticle._id;
-        return articleItem;
       })
       .catch((error) => {
         if (error instanceof !NotFoundError) {
           console.log(error);
           next(error);
         }
-        return articleItem;
-      });
+      })
+      .finally(() => articleItem);
+    return articleItem;
   });
   res.json({ checkedArticles });
 };
