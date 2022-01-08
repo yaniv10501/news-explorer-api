@@ -57,13 +57,13 @@ module.exports.saveArticle = (req, res, next) => {
     .catch((error) => checkErrors(error, next));
 };
 
-module.exports.checkSavedArticles = async (req, res, next) => {
+module.exports.checkSavedArticles = (req, res, next) => {
   const { _id: userId } = req.user;
   const { articles } = req.body;
 
-  const checkedArticles = await articles.map(async (item) => {
-    let articleItem = item;
-    articleItem = await article
+  const checkedArticles = articles.map((item) => {
+    const articleItem = item;
+    article
       .findOne({ owner: userId, link: articleItem.url })
       .orFail(() => {
         throw new NotFoundError('Article is not saved');
@@ -72,12 +72,11 @@ module.exports.checkSavedArticles = async (req, res, next) => {
         articleItem._id = savedArticle._id;
       })
       .catch((error) => {
-        if (error instanceof !NotFoundError) {
-          console.log(error);
-          next(error);
+        if (error instanceof NotFoundError) {
+          return;
         }
-      })
-      .finally(() => articleItem);
+        checkErrors(error, next);
+      });
     return articleItem;
   });
   res.json({ checkedArticles });
