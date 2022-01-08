@@ -49,6 +49,12 @@ module.exports.createUser = (req, res, next) => {
     .catch((error) => checkErrors(error, next));
 };
 
+module.exports.getAllUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send(users))
+    .catch((err) => next(err));
+};
+
 module.exports.getUserMe = (req, res, next) => {
   User.findOne({ _id: req.user?._id })
     .orFail(() => {
