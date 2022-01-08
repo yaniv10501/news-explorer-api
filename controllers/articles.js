@@ -60,7 +60,7 @@ module.exports.saveArticle = (req, res, next) => {
 module.exports.checkSavedArticles = (req, res, next) => {
   const { articles } = req.body;
 
-  articles.forEach((item) => {
+  const savedArticles = articles.map((item) => {
     const articleItem = item;
     article
       .findOne({ link: articleItem.url })
@@ -76,8 +76,9 @@ module.exports.checkSavedArticles = (req, res, next) => {
         }
         checkErrors(error, next);
       });
+    return articleItem;
   });
-  res.json(articles);
+  res.json(savedArticles);
 };
 
 module.exports.getSavedArticles = (req, res, next) => {
