@@ -70,14 +70,12 @@ module.exports.checkSavedArticles = async (req, res, next) => {
       })
       .then((savedArticle) => {
         articleItem._id = savedArticle._id;
-        return articleItem;
       })
       .catch((error) => {
-        if (error instanceof NotFoundError) {
-          return articleItem;
+        if (error instanceof !NotFoundError) {
+          console.log(error);
+          next(Error);
         }
-        checkErrors(error, next);
-        return articleItem;
       });
     return articleItem;
   });
