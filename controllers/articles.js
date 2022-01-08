@@ -57,6 +57,29 @@ module.exports.saveArticle = (req, res, next) => {
     .catch((error) => checkErrors(error, next));
 };
 
+module.exports.checkSaveArticles = (req, res, next) => {
+  const { articles } = req;
+
+  articles.forEach((item) => {
+    const articleItem = item;
+    article
+      .findOne({ link: articleItem.url })
+      .orFail(() => {
+        throw new NotFoundError('Article is not saved');
+      })
+      .then((savedArticle) => {
+        articleItem._id = savedArticle._id;
+      })
+      .catch((error) => {
+        if (error instanceof NotFoundError) {
+          return;
+        }
+        checkErrors(error, next);
+      });
+  });
+  res.send(article);
+};
+
 module.exports.getSavedArticles = (req, res, next) => {
   const { _id: userId } = req.user;
 
