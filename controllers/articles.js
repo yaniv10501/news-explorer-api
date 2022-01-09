@@ -15,10 +15,6 @@ const checkErrors = (error, next) => {
     next(new CastError(error.reason));
     return;
   }
-  if (error.name === 'MongoServerError' && error.message.includes('link_1 dup key')) {
-    next(new AlreadyUsedError('This Article is already saved'));
-    return;
-  }
   next(error);
 };
 
@@ -35,32 +31,38 @@ module.exports.saveArticle = (req, res, next) => {
       article
         .findOne({ owner, link })
         .orFail(() => {
-          article
-            .create({
-              keyword,
-              title,
-              text,
-              date,
-              source,
-              link,
-              image,
-              owner,
-            })
-            .then((savedArticle) => {
-              res.status(201).json({
-                message: `Article ${title} saved successfully`,
-                article: {
-                  title,
-                  id: savedArticle._id,
-                },
-              });
-            })
-            .catch((error) => checkErrors(error, next));
+          throw new NotFoundError('Article is not saved');
         })
         .then(() => {
           throw new AlreadyUsedError('This Article is already saved');
         })
-        .catch((error) => checkErrors(error, next));
+        .catch((error) => {
+          if (error instanceof NotFoundError) {
+            article
+              .create({
+                keyword,
+                title,
+                text,
+                date,
+                source,
+                link,
+                image,
+                owner,
+              })
+              .then((savedArticle) => {
+                res.status(201).json({
+                  message: `Article ${title} saved successfully`,
+                  article: {
+                    title,
+                    id: savedArticle._id,
+                  },
+                });
+              })
+              .catch((err) => checkErrors(err, next));
+          } else {
+            checkErrors(error, next);
+          }
+        });
     })
     .catch((error) => checkErrors(error, next));
 };
