@@ -33,24 +33,32 @@ module.exports.saveArticle = (req, res, next) => {
     })
     .then(() => {
       article
-        .create({
-          keyword,
-          title,
-          text,
-          date,
-          source,
-          link,
-          image,
-          owner,
-        })
-        .then((savedArticle) => {
-          res.status(201).json({
-            message: `Article ${title} saved successfully`,
-            article: {
+        .findOne({ owner, link })
+        .orFail(() => {
+          article
+            .create({
+              keyword,
               title,
-              id: savedArticle._id,
-            },
-          });
+              text,
+              date,
+              source,
+              link,
+              image,
+              owner,
+            })
+            .then((savedArticle) => {
+              res.status(201).json({
+                message: `Article ${title} saved successfully`,
+                article: {
+                  title,
+                  id: savedArticle._id,
+                },
+              });
+            })
+            .catch((error) => checkErrors(error, next));
+        })
+        .then(() => {
+          throw new AlreadyUsedError('This Article is already saved');
         })
         .catch((error) => checkErrors(error, next));
     })
