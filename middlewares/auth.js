@@ -105,14 +105,14 @@ module.exports = async (req, res, next) => {
             await Tokens.bulkWrite(bulkUpdate);
             res.cookie('authorization', `Bearer ${newToken}`, {
               maxAge: 1000 * 60 * 15,
-              httpOnly: false,
-              secure: false,
+              httpOnly: true,
+              secure: true,
               domain: 'nomoreparties.sbs',
             });
             res.cookie('refreshToken', newRefreshJwt, {
               maxAge: 1000 * 60 * 60 * 24 * 7,
-              httpOnly: false,
-              secure: false,
+              httpOnly: true,
+              secure: true,
               signed: true,
               domain: 'nomoreparties.sbs',
             });
