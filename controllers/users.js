@@ -49,18 +49,12 @@ module.exports.createUser = (req, res, next) => {
     .catch((error) => checkErrors(error, next));
 };
 
-module.exports.getAllUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch((err) => next(err));
-};
-
 module.exports.getUserMe = (req, res, next) => {
-  User.findOne({ _id: req.user?._id })
+  User.findOne({ _id: req.user._id })
     .orFail(() => {
       throw new NotFoundError('User ID not found');
     })
-    .then((user) => res.send(user))
+    .then((user) => res.send({ name: user.name, email: user.email }))
     .catch((error) => checkErrors(error, next));
 };
 
@@ -94,14 +88,21 @@ module.exports.login = (req, res, next) => {
             .then(() => {
               res.cookie('authorization', `Bearer ${token}`, {
                 maxAge: 1000 * 30,
+                httpOnly: true,
+                secure: true,
+                domain: 'nomoreparties.sbs',
               });
               res.cookie('refreshToken', refreshJwt, {
                 maxAge: 1000 * 60 * 60 * 24 * 7,
                 httpOnly: true,
                 secure: true,
                 signed: true,
+                domain: 'nomoreparties.sbs',
               });
-              return res.send('Successfully logged in');
+              return res.json({
+                email: user.email,
+                name: user.name,
+              });
             })
             .catch((error) => {
               if (
@@ -135,19 +136,47 @@ module.exports.login = (req, res, next) => {
                   });
                   res.cookie('authorization', `Bearer ${token}`, {
                     maxAge: 1000 * 30,
+                    httpOnly: true,
+                    secure: true,
+                    domain: 'nomoreparties.sbs',
                   });
                   res.cookie('refreshToken', refreshJwt, {
                     maxAge: 1000 * 60 * 60 * 24 * 7,
                     httpOnly: true,
                     secure: true,
                     signed: true,
+                    domain: 'nomoreparties.sbs',
                   });
-                  return res.send('Successfully logged in');
+                  return res.json({
+                    message: 'Successfully logged in',
+                  });
                 })
                 .catch((err) => checkErrors(err, next));
             });
         })
         .catch((error) => checkErrors(error, next))
     )
+    .catch((error) => checkErrors(error, next));
+};
+
+module.exports.logout = (req, res, next) => {
+  const { _id } = req.user;
+  Tokens.deleteOne({ userId: _id })
+    .then(() => {
+      res.cookie('authorization', '', {
+        maxAge: 0,
+        httpOnly: true,
+        secure: true,
+        domain: 'nomoreparties.sbs',
+      });
+      res.cookie('refreshToken', '', {
+        maxAge: 0,
+        httpOnly: true,
+        secure: true,
+        signed: true,
+        domain: 'nomoreparties.sbs',
+      });
+      res.json({ message: 'Successfully logged out' });
+    })
     .catch((error) => checkErrors(error, next));
 };

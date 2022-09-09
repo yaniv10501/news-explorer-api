@@ -5,8 +5,13 @@ const {
   validateUserSchema,
   validateLoginSchema,
 } = require('../utils/joi');
-const { getAllUsers, getUserMe, createUser, login } = require('../controllers/users');
-const { getSavedArticles, saveArticle, deleteArticle } = require('../controllers/articles');
+const { getUserMe, createUser, login, logout } = require('../controllers/users');
+const {
+  getSavedArticles,
+  saveArticle,
+  deleteArticle,
+  checkSavedArticles,
+} = require('../controllers/articles');
 const auth = require('../middlewares/auth');
 
 router.post('/api/signup', validateUserSchema, createUser);
@@ -17,12 +22,14 @@ router.use(auth);
 
 router.get('/api/articles', getSavedArticles);
 
+router.post('/api/articles/checkSaved', checkSavedArticles);
+
 router.post('/api/articles', validateArticleSchema, saveArticle);
 
 router.delete('/api/articles/:articleId', validateHeadersIdParamScehema, deleteArticle);
 
-router.get('/api/users/all', getAllUsers);
-
 router.get('/api/users/me', getUserMe);
+
+router.post('/api/signout', logout);
 
 module.exports = router;
