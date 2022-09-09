@@ -15,7 +15,7 @@ const routes = require('./routes/index');
 const app = express();
 
 const {
-  PORT = 3000,
+  PORT = 3020,
   MONGO_DB_SERVER = 'mongodb://localhost:27017',
   NODE_ENV = 'development',
   COOKIE_SECRET = 'cookie-secret',
