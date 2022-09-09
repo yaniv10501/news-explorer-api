@@ -90,14 +90,14 @@ module.exports.login = (req, res, next) => {
                 maxAge: 1000 * 30,
                 httpOnly: true,
                 secure: true,
-                domain: 'nomoreparties.sbs',
+                domain: 'news-explorer.yanivportfolio.com',
               });
               res.cookie('refreshToken', refreshJwt, {
                 maxAge: 1000 * 60 * 60 * 24 * 7,
                 httpOnly: true,
                 secure: true,
                 signed: true,
-                domain: 'nomoreparties.sbs',
+                domain: 'news-explorer.yanivportfolio.com',
               });
               return res.json({
                 email: user.email,
@@ -138,14 +138,14 @@ module.exports.login = (req, res, next) => {
                     maxAge: 1000 * 30,
                     httpOnly: true,
                     secure: true,
-                    domain: 'nomoreparties.sbs',
+                    domain: 'news-explorer.yanivportfolio.com',
                   });
                   res.cookie('refreshToken', refreshJwt, {
                     maxAge: 1000 * 60 * 60 * 24 * 7,
                     httpOnly: true,
                     secure: true,
                     signed: true,
-                    domain: 'nomoreparties.sbs',
+                    domain: 'news-explorer.yanivportfolio.com',
                   });
                   return res.json({
                     message: 'Successfully logged in',
@@ -167,14 +167,14 @@ module.exports.logout = (req, res, next) => {
         maxAge: 0,
         httpOnly: true,
         secure: true,
-        domain: 'nomoreparties.sbs',
+        domain: 'news-explorer.yanivportfolio.com',
       });
       res.cookie('refreshToken', '', {
         maxAge: 0,
         httpOnly: true,
         secure: true,
         signed: true,
-        domain: 'nomoreparties.sbs',
+        domain: 'news-explorer.yanivportfolio.com',
       });
       res.json({ message: 'Successfully logged out' });
     })
